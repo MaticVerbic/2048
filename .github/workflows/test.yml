@@ -1,8 +1,6 @@
 name: go-ci-pipeline-test
 
-on: 
-  - push
-  - pull-request
+on: [push, pull_request]
 
 test:
     strategy:

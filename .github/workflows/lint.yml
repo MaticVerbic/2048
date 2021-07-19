@@ -1,8 +1,5 @@
-name: go-ci-pipeline
-
-on: 
-  - push
-  - pull-request
+name: go-ci-pipeline-lint
+on: [push, pull_request]
 
 jobs: 
   lint: 
