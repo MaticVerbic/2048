@@ -39,6 +39,20 @@ func main() {
 			if _, err := game.Move(); err != nil {
 				game.Log.Error(err)
 			}
+		case 'w':
+			if err := game.MoveUp(); err != nil {
+				game.Log.Error((err))
+			}
+			if _, err := game.Move(); err != nil {
+				game.Log.Error(err)
+			}
+		case 's':
+			if err := game.MoveDown(); err != nil {
+				game.Log.Error((err))
+			}
+			if _, err := game.Move(); err != nil {
+				game.Log.Error(err)
+			}
 		case 'q':
 			os.Exit(0)
 		}

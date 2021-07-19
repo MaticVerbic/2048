@@ -83,6 +83,10 @@ func (g *Game) addOne() {
 			if val == 0 {
 				empty = append(empty, []int{k, j})
 			}
+			if val == 2048 {
+				g.Done = true
+				return
+			}
 		}
 	}
 
