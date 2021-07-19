@@ -15,6 +15,7 @@ type Left int
 const (
 	moveCheckL Left = iota
 	moveCheckR
+	moveLeftOne
 	moveLeft
 	addLeft
 	invalidLeft
@@ -111,60 +112,51 @@ func (g *Game) addOne() {
 	g.Rows[choice[0]][choice[1]] = 2
 }
 
-func (g *Game) MoveLeft() {
-	for row := 0; row < len(g.Rows); row++ {
-		_, checkL, checkR := 0, 0, 1
+func (g *Game) reduceRow(row [4]int) [4]int {
+	out := [4]int{}
 
-		for checkL < len(g.Rows[row])-1 {
-			switch evalLeft(g.Rows[row], checkL, checkR) {
-			case moveCheckL:
-				checkL++
-				checkR++
-			case moveCheckR:
-				checkR++
-			case moveLeft:
-				g.Rows[row][checkL] = g.Rows[row][checkR]
-				g.Rows[row][checkR] = 0
-				checkR = checkL + 1
-			case addLeft:
-				g.Rows[row][checkL] += g.Rows[row][checkR]
-				g.Rows[row][checkR] = 0
-				checkR++
-				checkL++
-
-			}
-
-			if checkR > len(g.Rows[row])-1 {
-				checkR = len(g.Rows[row]) - 1
-			}
+	i := 0
+	for _, elem := range row {
+		if elem != 0 {
+			out[i] = elem
+			i++
 		}
 	}
+
+	return out
 }
 
-func evalLeft(rows [4]int, left, right int) Left {
-	if rows[left] != 0 && rows[right] != 0 && rows[left] != rows[right] {
-		return moveCheckL
+func (g *Game) addRow(row [4]int) [4]int {
+	for i := len(row) - 1; i >= 1; i-- {
+		left, right := row[i], row[i-1]
+		if left == right && left != 0 {
+			row[i] = left + right
+			row[i-1] = 0
+		}
+	}
+	return g.reduceRow(row)
+}
+
+func (g *Game) reverseArr(rows [4]int) [4]int {
+	out := [4]int{}
+
+	for i, elem := range rows {
+		out[len(rows)-1-i] = elem
 	}
 
-	if rows[left] == 0 && rows[right] != 0 {
-		return moveLeft
-	}
+	return out
+}
 
-	if rows[left] != 0 && rows[right] == rows[left] {
-		return addLeft
+func (g *Game) MoveLeft() {
+	for r, row := range g.Rows {
+		reduced := g.reduceRow(row)
+		g.Rows[r] = g.addRow(reduced)
 	}
-
-	if rows[right] == 0 && right == len(rows)-1 {
-		return moveCheckL
-	}
-
-	if rows[right] == 0 {
-		return moveCheckR
-	}
-
-	return invalidLeft
 }
 
 func (g *Game) MoveRight() {
-
+	for r, row := range g.Rows {
+		reduced := g.reduceRow(g.reverseArr(row))
+		g.Rows[r] = g.reverseArr(g.addRow(reduced))
+	}
 }

@@ -111,3 +111,90 @@ func TestLeft(t *testing.T) {
 		})
 	}
 }
+
+func TestRight(t *testing.T) {
+	tests := []struct {
+		Name     string
+		Rows     [4][4]int
+		Expected [4][4]int
+	}{
+		{
+			Name: "simple move right test",
+			Rows: [4][4]int{
+				{2, 0, 0, 0},
+				{0, 2, 0, 0},
+				{0, 0, 2, 0},
+				{0, 0, 0, 2},
+			},
+			Expected: [4][4]int{
+				{0, 0, 0, 2},
+				{0, 0, 0, 2},
+				{0, 0, 0, 2},
+				{0, 0, 0, 2},
+			},
+		},
+		{
+			Name: "complex move right test",
+			Rows: [4][4]int{
+				{8, 0, 4, 2},
+				{0, 0, 4, 2},
+				{0, 4, 0, 2},
+				{0, 8, 4, 2},
+			},
+			Expected: [4][4]int{
+				{0, 8, 4, 2},
+				{0, 0, 4, 2},
+				{0, 0, 4, 2},
+				{0, 8, 4, 2},
+			},
+		},
+		{
+			Name: "simple add right test",
+			Rows: [4][4]int{
+				{2, 2, 0, 0},
+				{2, 0, 2, 0},
+				{2, 0, 0, 2},
+				{0, 0, 2, 2},
+			},
+			Expected: [4][4]int{
+				{0, 0, 0, 4},
+				{0, 0, 0, 4},
+				{0, 0, 0, 4},
+				{0, 0, 0, 4},
+			},
+		},
+		{
+			Name: "complex add right test",
+			Rows: [4][4]int{
+				{2, 0, 2, 4},
+				{4, 2, 2, 8},
+				{2, 2, 2, 2},
+				{4, 8, 2, 2},
+			},
+			Expected: [4][4]int{
+				{0, 0, 4, 4},
+				{0, 4, 4, 8},
+				{0, 0, 4, 4},
+				{0, 4, 8, 4},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.Name, func(t *testing.T) {
+			game.Rows = test.Rows
+			game.MoveRight()
+
+			if ok := reflect.DeepEqual(game.Rows, test.Expected); !ok {
+				out, err := game.Draw()
+				if err != nil {
+					t.Logf("drawing failed with err %v (%s)", err, test.Name)
+					t.FailNow()
+				}
+
+				t.Logf("Test failed: %s\n%s", test.Name, out)
+				t.FailNow()
+			}
+		})
+	}
+}
