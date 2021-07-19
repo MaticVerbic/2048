@@ -31,11 +31,14 @@ func main() {
 		switch char {
 		case 'a':
 			game.MoveLeft()
-			game.Move()
-
+			if _, err := game.Move(); err != nil {
+				game.Log.Error(err)
+			}
 		case 'd':
 			game.MoveLeft()
-			game.Move()
+			if _, err := game.Move(); err != nil {
+				game.Log.Error(err)
+			}
 		case 'q':
 			os.Exit(0)
 		}
