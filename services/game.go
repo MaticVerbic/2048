@@ -115,7 +115,7 @@ func (g *Game) reduceRow(row [4]int) [4]int {
 	return out
 }
 
-func (g *Game) addRow(row [4]int) [4]int {
+func (g *Game) sumRow(row [4]int) [4]int {
 	for i := len(row) - 1; i >= 1; i-- {
 		left, right := row[i], row[i-1]
 		if left == right && left != 0 {
@@ -136,16 +136,63 @@ func (g *Game) reverseArr(rows [4]int) [4]int {
 	return out
 }
 
+func (g *Game) getCol(col int) ([4]int, error) {
+	out := [4]int{}
+	if col > 4 {
+		return out, errors.New("index out of range")
+	}
+
+	for i, row := range g.Rows {
+		out[i] = row[col]
+	}
+
+	return out, nil
+}
+
 func (g *Game) MoveLeft() {
 	for r, row := range g.Rows {
 		reduced := g.reduceRow(row)
-		g.Rows[r] = g.addRow(reduced)
+		g.Rows[r] = g.sumRow(reduced)
 	}
 }
 
 func (g *Game) MoveRight() {
 	for r, row := range g.Rows {
 		reduced := g.reduceRow(g.reverseArr(row))
-		g.Rows[r] = g.reverseArr(g.addRow(reduced))
+		g.Rows[r] = g.reverseArr(g.sumRow(reduced))
 	}
+}
+
+func (g *Game) MoveUp() error {
+	for j := 0; j < len(g.Rows); j++ {
+		col, err := g.getCol(j)
+		if err != nil {
+			return errors.WrapPrefix(err, "failed to get col", 0)
+		}
+		reduced := g.reduceRow(col)
+		row := g.sumRow(reduced)
+
+		for i := 0; i < len(row); i++ {
+			g.Rows[i][j] = row[i]
+		}
+	}
+
+	return nil
+}
+
+func (g *Game) MoveDown() error {
+	for j := 0; j < len(g.Rows); j++ {
+		col, err := g.getCol(j)
+		if err != nil {
+			return errors.WrapPrefix(err, "failed to get col", 0)
+		}
+		reduced := g.reduceRow(g.reverseArr(col))
+		row := g.reverseArr(g.sumRow(reduced))
+
+		for i := 0; i < len(row); i++ {
+			g.Rows[i][j] = row[i]
+		}
+	}
+
+	return nil
 }
