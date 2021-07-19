@@ -35,7 +35,7 @@ func main() {
 				game.Log.Error(err)
 			}
 		case 'd':
-			game.MoveLeft()
+			game.MoveRight()
 			if _, err := game.Move(); err != nil {
 				game.Log.Error(err)
 			}
