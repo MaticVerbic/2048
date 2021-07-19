@@ -10,17 +10,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type Left int
-
-const (
-	moveCheckL Left = iota
-	moveCheckR
-	moveLeftOne
-	moveLeft
-	addLeft
-	invalidLeft
-)
-
 type Game struct {
 	id   string
 	Rows [4][4]int
